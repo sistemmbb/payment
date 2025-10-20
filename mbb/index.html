@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maybank Instant Transfer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --maybank-red: #E21836;
+            --maybank-yellow: #ffcf03;
+            --maybank-dark: #1E1E1E;
+            --maybank-blue: #0062A9;
+            --light-gray: #F5F5F5;
+            --mid-gray: #E0E0E0;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --success: #27AE60;
+            --warning: #E67E22;
+            --card-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        header {
+            background: #ffcf03;
+            color: black;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            height: 70px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            height: 100%;
+        }
+        
+        .maybank-logo {
+            height: 80%;
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+        }
+        
+        .maybank-logo img {
+            height: 100%;
+            max-height: 45px;
+        }
+        
+        header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .time-container {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--maybank-yellow), #EAC100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--maybank-dark);
+            font-weight: 600;
+        }
+        
+        /* Navigation Styles */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        nav {
+            background: linear-gradient(to bottom, var(--maybank-dark), #151515);
+            width: 240px;
+            padding: 25px 15px;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        
+        .nav-header {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 0 10px 15px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        nav ul li {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        nav ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        nav ul li.active {
+            background: rgba(255, 209, 0, 0.2);
+            color: var(--maybank-yellow);
+            font-weight: 600;
+        }
+        
+        nav ul li i {
+            width: 22px;
+            text-align: center;
+            color: var(--maybank-yellow);
+        }
+        
+        .nav-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .logout:hover {
+            background: rgba(226, 24, 54, 0.2);
+            color: white;
+        }
+        
+        /* Main Content Styles */
+        main {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--maybank-yellow);
+        }
+        
+        .page-title h2 {
+            font-size: 26px;
+            color: var(--maybank-dark);
+            font-weight: 700;
+        }
+        
+        .page-title .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--maybank-red), #D01632);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            border: 1px solid var(--mid-gray);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            color: var(--maybank-dark);
+            font-weight: 700;
+        }
+        
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--maybank-dark);
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--mid-gray);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--maybank-blue);
+            box-shadow: 0 0 0 4px rgba(0, 98, 169, 0.2);
+        }
+        
+        .form-control.error {
+            border-color: var(--maybank-red);
+        }
+        
+        .error-message {
+            color: var(--maybank-red);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+        
+        .input-with-icon .form-control {
+            padding-left: 45px;
+        }
+        
+        .transaction-amount {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .amount-prefix {
+            background: var(--light-gray);
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: var(--maybank-dark);
+            border: 2px solid var(--mid-gray);
+            min-width: 45px;
+            text-align: center;
+        }
+        
+        /* Button Styles */
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--maybank-yellow), #ffd834);
+            color: var(--maybank-dark);
+            box-shadow: 0 4px 15px rgba(255, 207, 3, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #ffd834, var(--maybank-yellow));
+            box-shadow: 0 6px 20px rgba(255, 207, 3, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--maybank-blue);
+            border: 2px solid var(--maybank-blue);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 98, 169, 0.1);
+        }
+        
+        /* Status Section */
+        .status-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid var(--mid-gray);
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .status-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--maybank-dark);
+        }
+        
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-badge.failed {
+            background: rgba(226, 24, 54, 0.15);
+            color: var(--maybank-red);
+        }
+        
+        .status-details {
+            border-top: 2px solid var(--light-gray);
+            padding-top: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .detail-label {
+            width: 200px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: var(--text-dark);
+        }
+        
+        .detail-value.warning {
+            color: var(--maybank-red);
+            font-weight: 600;
+        }
+        
+        .progress-container {
+            margin-top: 25px;
+            background: rgba(245, 245, 245, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .progress-title {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .progress-percentage {
+            font-weight: 700;
+            color: var(--maybank-red);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: var(--mid-gray);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--maybank-red), #D01632);
+            border-radius: 5px;
+            width: 50%;
+        }
+        
+        /* Overlay & Loading */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading {
+            text-align: center;
+            color: white;
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 8px solid var(--maybank-yellow);
+            animation: spin 1.2s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            border: 2px solid var(--maybank-yellow);
+        }
+        
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .popup-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--maybank-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .popup-title i {
+            color: var(--maybank-red);
+        }
+        
+        .close-popup {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .close-popup:hover {
+            color: var(--maybank-red);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            nav {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .nav-header {
+                justify-content: center;
+            }
+            
+            nav ul {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                padding: 10px 15px;
+            }
+            
+            .nav-footer {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .detail-label {
+                width: 100%;
+            }
+            
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+                gap: 10px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            header h1 {
+                border-left: none;
+                padding-left: 0;
+                margin-left: 0;
+                border-top: 1px solid rgba(255,255,255,0.3);
+                padding-top: 10px;
+                margin-top: 10px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="maybank-logo">
+                <img src="logobank.png" alt="Maybank Logo">
+            </div>
+            <h1>Instant Fund Transfer</h1>
+        </div>
+        <div class="header-info">
+            <div class="time-container">
+                <i class="far fa-clock"></i>
+                <span id="currentTime"></span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">AD</div>
+                <span>Admin</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <nav>
+            <div class="nav-header">
+                <i class="fas fa-bars"></i>
+                <span>Main Menu</span>
+            </div>
+            <ul>
+                <li>
+                    <i class="fas fa-user"></i>
+                    <span>Saving Account-i</span>
+                </li>
+                <li>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Current Account</span>
+                </li>
+                <li class="active">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Fund Transfer</span>
+                </li>
+                <li>
+                    <i class="fas fa-wallet"></i>
+                    <span>Available Balance</span>
+                </li>
+                <li>
+                    <i class="fas fa-history"></i>
+                    <span>Transaction History</span>
+                </li>
+            </ul>
+            <div class="nav-footer">
+                <div class="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </nav>
+        
+        <main>
+            <div class="page-title">
+                <div class="icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h2>Interbank Fund Transfer</h2>
+            </div>
+            
+            <!-- Page 1: Input Section -->
+            <section id="page1">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Transfer Details</div>
+                            <div class="card-subtitle">Review and confirm transfer information</div>
+                        </div>
+                        <div class="status-badge failed">Failed</div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <input type="text" id="status" class="form-control" value="Failed">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="conditionalApproval">Conditional Approval</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                                <input type="text" id="conditionalApproval" class="form-control" value="Not Allowed" >
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reason">Reason</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-comment-alt"></i>
+                                <input type="text" id="reason" class="form-control" value="Insufficient credit balance, increment required.">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="action">Required Action</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-tasks"></i>
+                                <input type="text" id="action" class="form-control" value="**PLEASE COVER YOUR COMMITMENT WITH APPROVAL X2 RM680 (REFUNDABLE)**" >
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="percentage">Completion Percentage</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-percentage"></i>
+                                <input type="number" id="percentage" class="form-control" value="75" min="0" max="100">
+                            </div>
+                            <div class="error-message" id="percentage-error">Percentage must be between 0 and 100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <button class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                        <button class="btn btn-primary" onclick="goToPage2()">
+                            Continue <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Page 2: Open Interbank Transfer -->
+            <section id="page2" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Beneficiary Details</div>
+                            <div class="card-subtitle">Enter recipient bank information</div>
+                        </div>
+                        <img src="https://bestpay24.com/wp-content/uploads/2024/02/138275c43d5964666247db71bea5de20.webp" alt="Interbank Transfer" height="50">
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label for="applicantName">Applicant's Name</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="applicantName" class="form-control" value="AZMI BIN MUHAMMAD">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="nric">NRIC/Passport</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" id="nric" class="form-control" value="981222-03-5673">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="loanType">Type of Loan</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    <select id="loanType" class="form-control">
+                                        <option value="personal">Personal Loan</option>
+                                        <option value="business">Business Loan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="form-group">
+                                <label for="receivingBank">Receiving Bank</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-landmark"></i>
+                                    <select id="receivingBank" class="form-control">
+                                        <option value="">Select a bank</option>
+                                        <optgroup label="Traditional Banks">
+                                            <option>Maybank</option>
+                                            <option>CIMB Bank</option>
+                                            <option>Public Bank</option>
+                                            <option>RHB Bank</option>
+                                            <option>Hong Leong Bank</option>
+                                            <option>AmBank</option>
+                                            <option>Affin Bank</option>
+                                            <option>Alliance Bank</option>
+                                            <option>Bank Simpanan Nasional</option>
+                                            <option>Agrobank</option>
+                                            <option>Bank Rakyat</option>
+                                        </optgroup>
+                                        <optgroup label="Islamic Banks">
+                                            <option>Bank Islam</option>
+                                            <option>Bank Muamalat</option>
+                                            <option>MBSB Bank</option>
+                                            <option>Al Rajhi Bank</option>
+                                            <option>Kuwait Finance House</option>
+                                            <option>HSBC Amanah</option>
+                                            <option>OCBC Al-Amin</option>
+                                            <option>Standard Chartered Saadiq</option>
+                                        </optgroup>
+                                        <optgroup label="International Banks">
+                                            <option>HSBC Malaysia</option>
+                                            <option>OCBC Bank Malaysia</option>
+                                            <option>UOB Malaysia</option>
+                                            <option>Standard Chartered Bank</option>
+                                            <option>Bank of China</option>
+                                            <option>ICBC Malaysia</option>
+                                            <option>China Construction Bank</option>
+                                            <option>Bangkok Bank</option>
+                                            <option>MUFG Bank</option>
+                                            <option>Sumitomo Mitsui Bank</option>
+                                            <option>Mizuho Bank</option>
+                                            <option>Deutsche Bank</option>
+                                            <option>JP Morgan Chase</option>
+                                            <option>BNP Paribas</option>
+                                            <option>India International Bank</option>
+                                            <option>The Bank of Nova Scotia</option>
+                                        </optgroup>
+                                        <optgroup label="Digital Banks">
+                                            <option>GX Bank</option>
+                                            <option>Boost Bank</option>
+                                            <option>AEON Bank</option>
+                                            <option>KAF Digital Bank</option>
+                                            <option>RYT Bank</option>
+                                            <option>Touch N Go</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="error-message" id="bank-error">Please select a bank</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="beneficiaryAccount">Beneficiary Account Number</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                    <input type="text" id="beneficiaryAccount" class="form-control" placeholder="Enter account number">
+                                </div>
+                                <div class="error-message" id="account-error">Please enter a valid account number</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="transactionAmount">Transaction Amount (RM)</label>
+                                <div class="transaction-amount">
+                                    <div class="amount-prefix">RM</div>
+                                    <input type="number" id="transactionAmount" class="form-control" placeholder="Enter amount">
+                                </div>
+                                <div class="error-message" id="amount-error">Amount must be greater than 0</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <button class="btn btn-secondary" onclick="goToPage1()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="submitForm()">
+                            <i class="fas fa-paper-plane"></i> Submit Transfer
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="status-section">
+                    <div class="status-header">
+                        <div class="status-title">Transaction Status</div>
+                    </div>
+                    
+                    <div class="status-details">
+                        <div class="detail-row">
+                            <div class="detail-label">Current Status</div>
+                            <div class="detail-value">Pending</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Last Updated</div>
+                            <div class="detail-value" id="lastUpdated">-</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Security Level</div>
+                            <div class="detail-value">Level 2 Authentication Required</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Overlay & Loading -->
+    <div class="overlay" id="loadingOverlay">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Processing Your Transfer</div>
+        </div>
+    </div>
+    
+    <!-- Popup -->
+    <div class="popup" id="resultPopup">
+        <div class="popup-header">
+            <div class="popup-title">
+                <i class="fas fa-file-invoice"></i>
+                Transaction Result
+            </div>
+            <button class="close-popup" onclick="closePopup()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="status-details">
+            <div class="detail-row">
+                <div class="detail-label">Transaction Status</div>
+                <div class="detail-value warning" id="popup-status">Failed</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Conditional Approval</div>
+                <div class="detail-value warning" id="popup-approval">Not Allowed</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Reason</div>
+                <div class="detail-value warning" id="popup-reason">Commitment not strong enough</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Required Action</div>
+                <div class="detail-value warning" id="popup-action">**PLEASE COVER YOUR COMMITMENT WITH APPROVAL X2 RM680 (REFUNDABLE)**</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Applicant Name</div>
+                <div class="detail-value" id="popup-name">-</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Receiving Bank</div>
+                <div class="detail-value" id="popup-bank">-</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Transaction Amount</div>
+                <div class="detail-value" id="popup-amount">-</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="progress-title">Transfer Progress</div>
+                <div class="progress-percentage" id="popup-percentage">50%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="btn-container" style="margin-top: 30px;">
+            <button class="btn btn-primary" onclick="closePopup()">
+                <i class="fas fa-check"></i> Acknowledge
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentTime').textContent = now.toLocaleDateString('en-US', options);
+            
+            // Update last updated time
+            const lastUpdated = document.getElementById('lastUpdated');
+            if (lastUpdated) {
+                lastUpdated.textContent = now.toLocaleTimeString();
+            }
+        }
+        
+        // Page navigation functions
+        function goToPage2() {
+            const percentage = document.getElementById('percentage').value;
+            
+            // Validate percentage
+            if (percentage < 0 || percentage > 100 || isNaN(percentage)) {
+                document.getElementById('percentage-error').style.display = 'block';
+                document.getElementById('percentage').classList.add('error');
+                return;
+            }
+            
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'block';
+            updateTime();
+        }
+        
+        function goToPage1() {
+            document.getElementById('page2').style.display = 'none';
+            document.getElementById('page1').style.display = 'block';
+        }
+        
+        function resetForm() {
+            document.getElementById('percentage').value = '50';
+            document.getElementById('percentage').classList.remove('error');
+            document.getElementById('percentage-error').style.display = 'none';
+        }
+        
+        // Form submission
+        function submitForm() {
+            const bank = document.getElementById('receivingBank').value;
+            const account = document.getElementById('beneficiaryAccount').value;
+            const amount = document.getElementById('transactionAmount').value;
+            
+            // Reset errors
+            document.getElementById('bank-error').style.display = 'none';
+            document.getElementById('account-error').style.display = 'none';
+            document.getElementById('amount-error').style.display = 'none';
+            document.getElementById('receivingBank').classList.remove('error');
+            document.getElementById('beneficiaryAccount').classList.remove('error');
+            document.getElementById('transactionAmount').classList.remove('error');
+            
+            // Validate form
+            let valid = true;
+            
+            if (!bank) {
+                document.getElementById('bank-error').style.display = 'block';
+                document.getElementById('receivingBank').classList.add('error');
+                valid = false;
+            }
+            
+            if (!account || account.length < 5) {
+                document.getElementById('account-error').style.display = 'block';
+                document.getElementById('beneficiaryAccount').classList.add('error');
+                valid = false;
+            }
+            
+            if (!amount || amount <= 0) {
+                document.getElementById('amount-error').style.display = 'block';
+                document.getElementById('transactionAmount').classList.add('error');
+                valid = false;
+            }
+            
+            if (!valid) return;
+            
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.add('active');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.remove('active');
+                
+                // Get values for popup
+                const status = document.getElementById('status').value;
+                const approval = document.getElementById('conditionalApproval').value;
+                const reason = document.getElementById('reason').value;
+                const action = document.getElementById('action').value;
+                const percentage = document.getElementById('percentage').value;
+                const name = document.getElementById('applicantName').value;
+                const bankName = document.getElementById('receivingBank').value;
+                const amountValue = document.getElementById('transactionAmount').value;
+                
+                // Set popup values
+                document.getElementById('popup-status').textContent = status;
+                document.getElementById('popup-approval').textContent = approval;
+                document.getElementById('popup-reason').textContent = reason;
+                document.getElementById('popup-action').textContent = action;
+                document.getElementById('popup-percentage').textContent = percentage + '%';
+                document.getElementById('popup-name').textContent = name;
+                document.getElementById('popup-bank').textContent = bankName;
+                document.getElementById('popup-amount').textContent = 'RM ' + amountValue;
+                document.getElementById('progress-fill').style.width = percentage + '%';
+                
+                // Show popup
+                document.getElementById('resultPopup').classList.add('active');
+            }, 3000);
+        }
+        
+        // Close popup
+        function closePopup() {
+            document.getElementById('resultPopup').classList.remove('active');
+        }
+        
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
